@@ -42,14 +42,12 @@ body {
 
 header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 header h1 {
   font-size: 1.75rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
-  margin-bottom: 0.35rem;
 }
 
 header p {
@@ -77,12 +75,12 @@ header p {
   justify-content: space-between;
   font-size: 0.8rem;
   color: var(--text-muted);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .card-wrapper {
   perspective: 1200px;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .card {
@@ -107,7 +105,7 @@ header p {
 }
 
 .card-front, .card-back {
-  padding: 2rem;
+  padding: 1rem 2rem;
 }
 
 .card-back {
@@ -141,7 +139,7 @@ header p {
   font-size: 1.125rem;
   font-weight: 500;
   line-height: 1.55;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .options {
@@ -193,7 +191,7 @@ header p {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.85rem;
-  margin-top: 1.25rem;
+  margin-top: 1rem;
   font-size: 0.85rem;
   color: var(--text-muted);
   border-top: 1px dashed var(--border);
@@ -213,7 +211,6 @@ header p {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 0.75rem;
 }
 
 .answer-label {
@@ -314,7 +311,7 @@ header p {
 
 .keyboard-hint {
   text-align: center;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
   font-size: 0.78rem;
   color: var(--text-muted);
 }
@@ -330,7 +327,7 @@ kbd {
 }
 
 @media (max-width: 480px) {
-  .card-front, .card-back { padding: 1.35rem; }
+  .card-front, .card-back { padding: 1rem; }
   .question-text { font-size: 1rem; }
   .nav-btn { padding: 0.55rem 0.85rem; font-size: 0.85rem; }
 }

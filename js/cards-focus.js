@@ -1,0 +1,262 @@
+window.cardsFocus = [
+  // ===== Developer Fundamentals: Formulas =====
+  {
+    id: "Q1",
+    question: "A developer needs a formula field on Opportunity that shows 'High' when Amount is greater than 100000, otherwise 'Standard'. Which formula is correct?",
+    code: 'IF(Amount > 100000, "High", "Standard")',
+    options: [
+      { letter: "A", text: 'IF(Amount > 100000, "High", "Standard")' },
+      { letter: "B", text: 'CASE(Amount, 100000, "High", "Standard")' },
+      { letter: "C", text: 'IF(Amount > 100000) THEN "High" ELSE "Standard"' },
+      { letter: "D", text: 'WHEN(Amount > 100000, "High", "Standard")' },
+    ],
+    answer: "A",
+    explanation: "IF(logical_test, value_if_true, value_if_false) is the correct formula syntax. CASE compares an expression against a list of exact values, not a greater-than condition.",
+  },
+  {
+    id: "Q2",
+    question: "A formula field returns a blank result whenever a referenced number field is empty, breaking a calculation. Which function safely treats a blank number as zero?",
+    code: "BLANKVALUE(Discount__c, 0)\n/* or */\nNULLVALUE(Discount__c, 0)",
+    options: [
+      { letter: "A", text: "ISBLANK()" },
+      { letter: "B", text: "BLANKVALUE() (or NULLVALUE for numbers)" },
+      { letter: "C", text: "TEXT()" },
+      { letter: "D", text: "ABS()" },
+    ],
+    answer: "B",
+    explanation: "BLANKVALUE (and the older NULLVALUE for number/currency/percent) substitutes a value when the field is blank, preventing the whole formula from returning null.",
+  },
+  {
+    id: "Q3",
+    question: "Which formula correctly checks whether the Account's billing country is France using a cross-object reference from Contact?",
+    code: 'ISPICKVAL(Account.BillingCountry, "France")  // wrong type\nAccount.BillingCountry = "France"               // correct',
+    options: [
+      { letter: "A", text: 'ISPICKVAL(Account.BillingCountry, "France")' },
+      { letter: "B", text: 'Account.BillingCountry = "France"' },
+      { letter: "C", text: 'CONTAINS(Account, "France")' },
+      { letter: "D", text: 'Account__r.BillingCountry == "France"' },
+    ],
+    answer: "B",
+    explanation: "BillingCountry is a text field, so use a direct equality comparison. ISPICKVAL only works on picklist fields, and formulas use a single '=' for comparison.",
+  },
+  {
+    id: "Q4",
+    question: "A roll-up summary field is not available between two objects. What is the most likely reason?",
+    options: [
+      { letter: "A", text: "The objects are joined by a Lookup relationship instead of Master-Detail" },
+      { letter: "B", text: "The parent object has too few records" },
+      { letter: "C", text: "The formula return type is Text" },
+      { letter: "D", text: "Roll-up summaries require Apex" },
+    ],
+    answer: "A",
+    explanation: "Standard roll-up summary fields require a Master-Detail relationship (or specific standard relationships). For Lookup relationships you must use a record-triggered Flow or Apex to aggregate.",
+  },
+
+  // ===== Process Automation: Flows =====
+  {
+    id: "Q5",
+    question: "A business wants a complex calculation to run the instant a record is saved, before it is committed, with no extra DML. Which automation is the most efficient choice?",
+    options: [
+      { letter: "A", text: "A scheduled-triggered Flow" },
+      { letter: "B", text: "A before-save record-triggered Flow" },
+      { letter: "C", text: "An after-save record-triggered Flow with an Update element" },
+      { letter: "D", text: "A Process Builder process" },
+    ],
+    answer: "B",
+    explanation: "Before-save record-triggered flows update the same record in memory before commit without a separate DML/SOQL, making them the fastest option for same-record field updates.",
+  },
+  {
+    id: "Q6",
+    question: "Where do before-save record-triggered Flows execute in the order of execution relative to standard validation rules?",
+    options: [
+      { letter: "A", text: "After validation rules" },
+      { letter: "B", text: "Before validation rules" },
+      { letter: "C", text: "After all triggers" },
+      { letter: "D", text: "At the same time as roll-up summaries" },
+    ],
+    answer: "B",
+    explanation: "In the order of execution, before-save record-triggered flows run early: after system validation but before before-triggers and before standard (custom) validation rules.",
+  },
+  {
+    id: "Q7",
+    question: "A developer must call Apex from a screen Flow to perform a custom calculation. How should the Apex method be exposed?",
+    code: "public class DiscountCalculator {\n    @InvocableMethod(label='Calculate Discount')\n    public static List<Decimal> calc(List<Id> oppIds) {\n        // ...\n    }\n}",
+    options: [
+      { letter: "A", text: "Annotate the method with @AuraEnabled" },
+      { letter: "B", text: "Annotate the method with @InvocableMethod" },
+      { letter: "C", text: "Annotate the method with @future" },
+      { letter: "D", text: "Mark the method as webservice" },
+    ],
+    answer: "B",
+    explanation: "@InvocableMethod exposes an Apex method as an action that Flows (and Process Builder) can call. It must be static and take/return a List.",
+  },
+
+  // ===== Triggers =====
+  {
+    id: "Q8",
+    question: "Review this trigger. What is the main problem?",
+    code: "trigger AccountTrigger on Account (after update) {\n    for (Account a : Trigger.new) {\n        List<Contact> cons = [SELECT Id FROM Contact\n                              WHERE AccountId = :a.Id];\n        // process cons\n    }\n}",
+    options: [
+      { letter: "A", text: "It uses Trigger.new in an after update trigger" },
+      { letter: "B", text: "The SOQL query is inside the for loop, risking the SOQL governor limit" },
+      { letter: "C", text: "after update triggers cannot query Contacts" },
+      { letter: "D", text: "Triggers cannot use Trigger.new" },
+    ],
+    answer: "B",
+    explanation: "Placing SOQL inside a loop will hit the 100 SOQL queries per transaction limit on large batches. Bulkify by querying once with 'WHERE AccountId IN :Trigger.newMap.keySet()'.",
+  },
+  {
+    id: "Q9",
+    question: "In which trigger context can you safely modify field values on the records being saved WITHOUT performing an explicit DML statement?",
+    options: [
+      { letter: "A", text: "before insert / before update" },
+      { letter: "B", text: "after insert / after update" },
+      { letter: "C", text: "after delete" },
+      { letter: "D", text: "after undelete" },
+    ],
+    answer: "A",
+    explanation: "In before triggers, the records in Trigger.new are still in memory and not yet saved, so you can set field values directly. In after triggers the records are read-only.",
+  },
+  {
+    id: "Q10",
+    question: "Which trigger context variable should be used to access the Id of records that were just inserted?",
+    code: "trigger T on Account (after insert) {\n    for (Account a : Trigger.new) {\n        System.debug(a.Id); // populated in AFTER insert\n    }\n}",
+    options: [
+      { letter: "A", text: "Trigger.old in a before insert trigger" },
+      { letter: "B", text: "Trigger.new in an after insert trigger" },
+      { letter: "C", text: "Trigger.oldMap in an after insert trigger" },
+      { letter: "D", text: "Trigger.new in a before insert trigger" },
+    ],
+    answer: "B",
+    explanation: "Record Ids are only assigned after insert. In before insert, Trigger.new records have no Id yet. Trigger.old/oldMap are not available on insert.",
+  },
+  {
+    id: "Q11",
+    question: "A developer wants to prevent a trigger from running its logic more than once per transaction (recursion control). What is a common best practice?",
+    code: "public class TriggerHandler {\n    public static Boolean hasRun = false;\n}",
+    options: [
+      { letter: "A", text: "Use a static Boolean flag in a helper class" },
+      { letter: "B", text: "Add a @future annotation to the trigger" },
+      { letter: "C", text: "Use a validation rule" },
+      { letter: "D", text: "Increase the SOQL limit" },
+    ],
+    answer: "A",
+    explanation: "A static variable persists for the life of a transaction. Setting and checking a static Boolean is a standard pattern to guard against recursive trigger execution.",
+  },
+
+  // ===== Asynchronous vs Synchronous Apex =====
+  {
+    id: "Q12",
+    question: "A developer needs to make a callout to an external web service from a trigger. Why must this run asynchronously, and how?",
+    code: "@future(callout=true)\npublic static void sendToExternal(Set<Id> ids) {\n    // HTTP callout\n}",
+    options: [
+      { letter: "A", text: "Callouts are not allowed directly in a trigger's synchronous context; use a @future(callout=true) method or Queueable" },
+      { letter: "B", text: "Callouts must use a before trigger" },
+      { letter: "C", text: "Callouts require a validation rule" },
+      { letter: "D", text: "Triggers cannot call any Apex methods" },
+    ],
+    answer: "A",
+    explanation: "You cannot make a callout in the same synchronous transaction as pending DML (the trigger). Move it to an asynchronous context such as @future(callout=true) or a Queueable that implements Database.AllowsCallouts.",
+  },
+  {
+    id: "Q13",
+    question: "Which asynchronous Apex option supports job chaining and can hold complex object state (non-primitive members)?",
+    code: "public class MyJob implements Queueable {\n    public void execute(QueueableContext ctx) {\n        System.enqueueJob(new NextJob());\n    }\n}",
+    options: [
+      { letter: "A", text: "@future methods" },
+      { letter: "B", text: "Queueable Apex" },
+      { letter: "C", text: "Validation rules" },
+      { letter: "D", text: "Outbound messages" },
+    ],
+    answer: "B",
+    explanation: "Queueable Apex can take non-primitive types as members (unlike @future, which only accepts primitives) and supports chaining one job from another via System.enqueueJob.",
+  },
+  {
+    id: "Q14",
+    question: "A developer must process 5 million records nightly in a way that resets governor limits for each chunk. Which tool is designed for this?",
+    code: "global class Cleanup implements Database.Batchable<sObject> {\n    global Database.QueryLocator start(Database.BatchableContext bc){...}\n    global void execute(Database.BatchableContext bc, List<sObject> scope){...}\n    global void finish(Database.BatchableContext bc){...}\n}",
+    options: [
+      { letter: "A", text: "A @future method" },
+      { letter: "B", text: "Batch Apex (Database.Batchable)" },
+      { letter: "C", text: "A before-save Flow" },
+      { letter: "D", text: "A synchronous trigger" },
+    ],
+    answer: "B",
+    explanation: "Batch Apex processes records in chunks (default 200), and governor limits are reset for each execute() batch, making it ideal for very large data volumes. It can be scheduled with System.scheduleBatch or Schedulable.",
+  },
+  {
+    id: "Q15",
+    question: "Which statement about @future methods is TRUE?",
+    options: [
+      { letter: "A", text: "They can return a value to the caller" },
+      { letter: "B", text: "They must be static, return void, and accept only primitive parameters" },
+      { letter: "C", text: "They can be called directly from another @future method" },
+      { letter: "D", text: "They guarantee the order in which jobs run" },
+    ],
+    answer: "B",
+    explanation: "@future methods must be static, return void, and take only primitives (or collections of primitives) because the parameters are serialized. They cannot be chained from another future method and execution order is not guaranteed.",
+  },
+
+  // ===== Governor Limits =====
+  {
+    id: "Q16",
+    question: "What is the maximum number of SOQL queries allowed in a single synchronous Apex transaction?",
+    options: [
+      { letter: "A", text: "50" },
+      { letter: "B", text: "100" },
+      { letter: "C", text: "150" },
+      { letter: "D", text: "200" },
+    ],
+    answer: "B",
+    explanation: "Synchronous transactions allow 100 SOQL queries; asynchronous transactions allow 200. The total DML statements limit is 150 in both.",
+  },
+  {
+    id: "Q17",
+    question: "How does the heap size limit differ between synchronous and asynchronous Apex?",
+    options: [
+      { letter: "A", text: "Both are 6 MB" },
+      { letter: "B", text: "Synchronous is 6 MB, asynchronous is 12 MB" },
+      { letter: "C", text: "Synchronous is 12 MB, asynchronous is 6 MB" },
+      { letter: "D", text: "Both are unlimited" },
+    ],
+    answer: "B",
+    explanation: "Synchronous Apex has a 6 MB heap limit, while asynchronous Apex (batch, future, queueable, scheduled) gets a larger 12 MB heap.",
+  },
+  {
+    id: "Q18",
+    question: "What is the maximum number of records that a single DML statement can operate on in one transaction?",
+    options: [
+      { letter: "A", text: "200" },
+      { letter: "B", text: "1,000" },
+      { letter: "C", text: "10,000" },
+      { letter: "D", text: "50,000" },
+    ],
+    answer: "C",
+    explanation: "A single transaction can issue 150 DML statements, processing a total of 10,000 records across them. (50,000 is the limit for records returned by SOQL queries.)",
+  },
+  {
+    id: "Q19",
+    question: "What is the maximum CPU time allowed for a synchronous transaction, and why does it matter for trigger logic?",
+    options: [
+      { letter: "A", text: "10,000 ms; heavy in-memory processing or nested loops can exceed it" },
+      { letter: "B", text: "60,000 ms; only callouts count toward it" },
+      { letter: "C", text: "5,000 ms; only DML counts toward it" },
+      { letter: "D", text: "Unlimited for triggers" },
+    ],
+    answer: "A",
+    explanation: "Synchronous transactions allow 10,000 ms of CPU time (60,000 ms async). CPU time is consumed by Apex processing (loops, formula evaluation, etc.) but not by waiting on callouts or DML round-trips.",
+  },
+  {
+    id: "Q20",
+    question: "A trigger queries records inside a loop and the org receives a bulk upload of 250 records. Which governor limit is most likely to be hit first?",
+    code: "for (Account a : Trigger.new) {\n    Contact c = [SELECT Id FROM Contact WHERE AccountId = :a.Id LIMIT 1];\n}",
+    options: [
+      { letter: "A", text: "DML rows limit (10,000)" },
+      { letter: "B", text: "Total SOQL queries limit (100 sync)" },
+      { letter: "C", text: "Heap size limit (6 MB)" },
+      { letter: "D", text: "Callout limit (100)" },
+    ],
+    answer: "B",
+    explanation: "250 records means up to 250 SOQL queries (run in batches of 200), exceeding the 100-query synchronous limit. Bulkify by querying once outside the loop using a collection of Ids.",
+  },
+];

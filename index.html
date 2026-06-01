@@ -13,6 +13,11 @@
       <h1>Salesforce Platform Developer I</h1>
     </header>
 
+    <div class="deck-picker">
+      <label for="deckSelect">Deck</label>
+      <select id="deckSelect" aria-label="Select question deck"></select>
+    </div>
+
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
     <div class="progress-label">
       <span id="progressText">Question 1 of 8</span>
@@ -24,6 +29,7 @@
         <div class="card-front">
           <span class="question-badge" id="questionBadge">Q1</span>
           <p class="question-text" id="questionText"></p>
+          <pre class="code-block" id="codeBlock" hidden></pre>
           <ul class="options" id="optionsList"></ul>
           <div class="reveal-hint">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -58,6 +64,7 @@
   </div>
 
   <script src="js/cards.js"></script>
+  <script src="js/cards-focus.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
